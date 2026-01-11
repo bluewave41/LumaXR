@@ -21,6 +21,7 @@ public class ScreenManager : MonoBehaviour
     public GameObject zonesContainer;
     private readonly List<DropZone> dropZones = new();
     private bool isCenterSelected = false;
+    public ServerPanel serverPanel;
 
     private void Awake()
     {
@@ -45,6 +46,7 @@ public class ScreenManager : MonoBehaviour
 
     private async Task BeginStream(ServerCard card)
     {
+        serverPanel.gameObject.SetActive(false);
         HttpClient.Instance.StartClient(card.IP, card.Port);
         byte[] data = Encoding.UTF8.GetBytes("start");
         using var client = new UdpClient();

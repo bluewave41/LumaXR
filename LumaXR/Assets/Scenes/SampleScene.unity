@@ -462,6 +462,7 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: 85560c88ac943991c90d81098bac364b, type: 2}
   dropZonePrefab: {fileID: 6682370287270631422, guid: 71c439b2671ca6d349055b37fc387be5, type: 3}
   zonesContainer: {fileID: 0}
+  serverPanel: {fileID: 1888784619}
 --- !u!4 &116735383
 Transform:
   m_ObjectHideFlags: 0
