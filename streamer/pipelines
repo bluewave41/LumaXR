@@ -1,0 +1,2 @@
+pipewiresrc path={path} always-copy=true ! videoconvert ! nvh264enc bitrate=20000 gop-size=20 zerolatency=true preset=low-latency-hp rc-mode=constqp qp-const-i=20 qp-const-p=22 qp-const-b=24 b-adapt=false ! rtph264pay pt=96 mtu=1400 ! udpsink host=127.0.0.1 port=3555
+udpsrc address=127.0.0.1 port=%d buffer-size=1048576 caps="application/x-rtp, media=video, encoding-name=H264, payload=96" ! rtph264depay ! h264parse ! nvh264dec ! videoconvert  ! video/x-raw,format=RGBA ! appsink name="unity" emit-signals=true

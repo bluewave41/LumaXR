@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/Layouts/Options.uss?fileID=7433441132597879392&amp;guid=12f2f6ed4d923bf15903670a66ee420d&amp;type=3#Options"/>
+    <ui:VisualElement name="Container" class="container">
+        <ui:VisualElement name="Navigation" class="navigation">
+            <ui:VisualElement name="Settings" class="icon" style="background-image: url(&quot;project://database/Assets/Icons/settings.svg?fileID=7388822144124034973&amp;guid=b69dfbafac352f227b2efb43e66543fb&amp;type=3#settings&quot;);"/>
+            <ui:VisualElement name="Screens" class="icon" style="background-image: url(&quot;project://database/Assets/Icons/screen.svg?fileID=7388822144124034973&amp;guid=3744fc088acf772889f0122ca5768c08&amp;type=3#screen&quot;);"/>
+            <ui:VisualElement name="Portals" class="icon" style="background-image: url(&quot;project://database/Assets/Icons/portals.svg?fileID=7388822144124034973&amp;guid=b4116a32bfb4bfbe6a46a0936582941d&amp;type=3#portals&quot;);"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="Content" style="flex-grow: 1;"/>
+    </ui:VisualElement>
+</ui:UXML>

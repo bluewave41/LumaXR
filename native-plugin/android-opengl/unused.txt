@@ -1,0 +1,167 @@
+// context sharing
+// called in UnityPluginLoad
+void GLInit() {
+  g_unityDisplay = eglGetCurrentDisplay();
+  g_unityContext = eglGetCurrentContext();
+
+  Logger::logFormat("Unity context %p", g_unityContext);
+  Logger::logFormat("Unity display %p", g_unityDisplay);
+
+  Logger::log("Before display");
+  GstGLDisplayEGL *display = gst_gl_display_egl_new_with_egl_display(g_unityDisplay);
+
+  Logger::log("Before shared context");
+  sharedContext = gst_gl_context_new_wrapped(
+    GST_GL_DISPLAY_CAST(display),
+    (guintptr)g_unityContext,
+    GST_GL_PLATFORM_EGL,
+    GST_GL_API_GLES2
+  );
+
+  Logger::log("Before activate");
+  gst_gl_context_activate(sharedContext, TRUE);
+  GError *error;
+  Logger::log("After activate");
+  if (!gst_gl_context_fill_info (sharedContext, &error)) {
+    Logger::log("Failed to retrieve context info");
+    gst_gl_context_activate (sharedContext, FALSE);
+    return;
+  }
+
+  Logger::log("Before false activate");
+  gst_gl_context_activate (sharedContext, FALSE);
+
+  Logger::log("GL has been init successfully.");
+}
+
+// context sharing
+// given to the bus
+static gboolean
+sync_bus_call (GstBus *bus, GstMessage *msg, gpointer data)
+{
+  switch (GST_MESSAGE_TYPE (msg)) {
+    case GST_MESSAGE_NEED_CONTEXT:
+    {
+      const gchar *context_type;
+      GstContext *context = NULL;
+     
+      gst_message_parse_context_type (msg, &context_type);
+      Logger::logFormat("Got need context %s", context_type);
+
+      if (g_strcmp0 (context_type, "gst.gl.app_context") == 0) {
+        GstGLContext *gl_context = sharedContext;
+        GstStructure *s;
+
+        Logger::log("Setting context...");
+        context = gst_context_new ("gst.gl.app_context", TRUE);
+        Logger::log("Made new context");
+        s = gst_context_writable_structure (context);
+        Logger::log("Made writable context");
+        gst_structure_set (s, "context", GST_TYPE_GL_CONTEXT, gl_context, NULL);
+        Logger::log("Set GL context");
+        gst_element_set_context (GST_ELEMENT (msg->src), context);
+        Logger::log("Set context");
+      }
+      if (context) {
+        gst_context_unref (context);
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  return FALSE;
+}
+
+  gst_bus_set_sync_handler(bus, (GstBusSyncHandler)sync_bus_call, NULL, NULL);
+
+
+// appsink samples
+static GstFlowReturn on_new_sample(GstAppSink* sink, gpointer user_data)
+{
+  GStreamerInstance *instance = static_cast<GStreamerInstance*>(user_data);
+
+  GstSample* sample = gst_app_sink_pull_sample(sink);
+  if (!sample) {
+    return GST_FLOW_OK;
+  }
+
+  Logger::log("Got a sample!");
+
+  if (instance->sample) {
+    gst_sample_unref(instance->sample);
+  }
+
+  instance->sample = sample;
+
+  return GST_FLOW_OK;
+}
+
+// connected in StartGStreamer
+  GstElement *appsink = gst_bin_get_by_name(GST_BIN(instance->pipeline), "unity");
+  g_signal_connect(
+    appsink,
+    "new-sample",
+    G_CALLBACK(on_new_sample),
+    instance
+  );
+
+// appsink copy texture
+/*void CopyOESToUnityTexture(GStreamerInstance* instance) {
+    if (!instance->sample) {
+        return;
+    }
+
+    GstBuffer* buffer = gst_sample_get_buffer(instance->sample);
+    GstMemory* mem = gst_buffer_peek_memory(buffer, 0);
+    if (!gst_is_gl_memory(mem))
+        return;
+
+    GstGLMemory* glMem = GST_GL_MEMORY_CAST(mem);
+    GLuint srcTex = gst_gl_memory_get_texture_id(glMem);
+    
+    GstGLTextureTarget fmt = gst_gl_memory_get_texture_target(glMem);
+    Logger::logFormat("Texture target: %d", fmt);
+    Logger::logFormat("Src tex: %d", srcTex);
+    Logger::logFormat("Instance texture: %d", instance->textureId);
+    Logger::logFormat("FBO: %d", instance->fbo);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, instance->fbo);
+    glFramebufferTexture2D(
+        GL_READ_FRAMEBUFFER,
+        GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D,
+        srcTex,
+        0
+    );
+
+    GLenum status = glCheckFramebufferStatus(GL_READ_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE) {
+        Logger::logFormat("FBO incomplete: 0x%x", status);
+        return;
+    }
+
+    // instance->eglSurface texture is current here
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+    glBlitFramebuffer(
+        0, 0, instance->width, instance->height,
+        0, 0, instance->width, instance->height,
+        GL_COLOR_BUFFER_BIT,
+        GL_LINEAR
+    );
+
+    eglSwapBuffers(g_unityDisplay, instance->eglSurface);
+
+    // Cleanup
+    gst_sample_unref(instance->sample);
+    instance->sample = nullptr;
+
+    Logger::log("Copied GLMemory texture via GPU");
+}*/
+
+// variables
+static EGLContext g_unityContext = EGL_NO_DISPLAY;
+static EGLDisplay g_unityDisplay = EGL_NO_DISPLAY;
+static GstGLContext *sharedContext;

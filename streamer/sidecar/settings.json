@@ -1,0 +1,4 @@
+{
+  "senderPipeline": "pipewiresrc path={path} always-copy=true ! videoconvert ! nvh264enc bitrate=8000 gop-size=60 zerolatency=true preset=low-latency-hp rc-mode=cbr b-adapt=false ! rtph264pay pt=96 mtu=1400 ! udpsink host=127.0.0.1 port=3555",
+  "receiverPipeline": "udpsrc address=127.0.0.1 port=%d buffer-size=1048576 caps=\"application/x-rtp, media=video, encoding-name=H264, payload=96\" ! rtph264depay ! h264parse ! nvh264dec ! videoconvert ! caps=\"video/x-raw width=3840,height=1080\" ! appsink name=\"unity\" emit-signals=true"
+}

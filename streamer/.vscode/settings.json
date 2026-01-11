@@ -1,0 +1,9 @@
+{
+  "svelte.enable-ts-plugin": true,
+  "files.exclude": {
+    "**/*.d.ts.map": true,
+    "**/*.d.ts": true,
+    "sidecar/**/*.js": true,
+    "**/*.js.map": true
+  }
+}
