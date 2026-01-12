@@ -1,9 +1,12 @@
 import { Discovery } from "./lib/Discovery";
 import Logger from "./lib/Logger";
+import PluginManager from "./lib/PluginManager";
 import Settings from "./lib/Settings";
 import StreamManager from "./lib/StreamManager";
 
 let discovery: Discovery | null = null;
+
+PluginManager.loadPlugins();
 
 const command = process.argv[2];
 if (command === "start-discovery") {

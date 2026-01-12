@@ -14,7 +14,6 @@ class InternalSidecar {
         PUBLIC_DISCOVERY_PORT,
       ]);
 
-      console.log("stdout started");
       command.stdout.on("data", (d) => {
         const message = d.toString();
         try {

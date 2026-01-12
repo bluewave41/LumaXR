@@ -1,7 +1,7 @@
 <script lang="ts">
   let activeTab = "CLIENTS";
 
-  const tabs = ["SCREENS", "SETTINGS", "LOGS", "DEBUG"];
+  const tabs = ["SCREENS", "SETTINGS", "LOGS", "DEBUG", "PLUGINS"];
 </script>
 
 <div class="container">

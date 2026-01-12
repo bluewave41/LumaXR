@@ -4,6 +4,7 @@ import { getMonitors, recordMonitor } from "./DBus";
 import StreamManager from "./StreamManager";
 import Logger from "./Logger";
 import { Monitor } from "./Monitor";
+import PluginManager from "./PluginManager";
 
 export class InternalHTTPServer {
   server: express.Express | undefined;
@@ -51,7 +52,8 @@ export class InternalHTTPServer {
 
       Logger.log("Virtual?: ", Settings.virtualOnly);
 
-      recordMonitor(stream.isVirtual, stream.port);
+      const nodeId = await PluginManager.runPlugin("create-monitor");
+      stream?.start(nodeId);
       res.json(stream.toJSON());
     });
 

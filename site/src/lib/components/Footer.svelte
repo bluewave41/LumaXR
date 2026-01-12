@@ -1,4 +1,4 @@
-<div class="footer">Footer</div>
+<div class="footer">Put some footer stuff here :)</div>
 
 <style>
 	.footer {
