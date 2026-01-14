@@ -10,6 +10,16 @@ public class ServerPanel : MonoBehaviour
     void Start()
     {
         scrollTransform = transform.Find("Canvas/Scroll View/Viewport/Content");
+
+        Debug.Log("Debug: " + Settings.Instance.debug);
+        if(Settings.Instance.debug)
+        {
+            Debug.Log("Inside here!");
+            servers.Add(new ServerInfo("debug"));
+            ServerCard card = Instantiate(serverCardPrefab);
+            card.transform.SetParent(scrollTransform, false);
+            card.UpdateIP("debug");
+        }
     }
 
     public void AddServer(ServerInfo server)

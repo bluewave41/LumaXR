@@ -1,11 +1,12 @@
 import Logger from "./Logger";
+import Settings from "./Settings";
 type PluginKeys = "create-monitor";
 interface Plugin {
     key: PluginKeys;
 }
 interface CreatePlugin extends Plugin {
     key: "create-monitor";
-    exec: (logger: typeof Logger) => Promise<number>;
+    exec: (logger: typeof Logger, settings: typeof Settings) => Promise<number>;
 }
 type AnyPlugin = CreatePlugin;
 type PluginReturnType = {

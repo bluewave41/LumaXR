@@ -51,7 +51,6 @@ public class Screen : MonoBehaviour
         grabInteractable.selectEntered.AddListener(OnGrab);
         grabInteractable.selectExited.AddListener(OnRelease);
         gameObject.SetActive(false);
-        grabInteractable.trackRotation = false;
     }
 
     private void LateUpdate()
@@ -137,26 +136,33 @@ public class Screen : MonoBehaviour
             ScreenManager.Instance.zonesContainer = zones;
         }
 
-        if(direction == Direction.CENTER)
+        if(!Settings.Instance.debug)
         {
-            // single physical
-            string response = await HttpClient.Instance.GET("/getPipeline");
-            ScreenResponse details = JsonUtility.FromJson<ScreenResponse>(response);
-            stream = new Stream(details.width, details.height, details.port, details.receiverPipeline);
+            if(direction == Direction.CENTER)
+            {
+                // single physical
+                string response = await HttpClient.Instance.GET("/getPipeline");
+                ScreenResponse details = JsonUtility.FromJson<ScreenResponse>(response);
+                stream = new Stream(details.width, details.height, details.port, details.receiverPipeline);
+            }
+            else
+            {
+                // virtual
+                CreateMonitorData json = new() { direction = this.direction.ToString() };
+                string response = await HttpClient.Instance.POST("/createMonitor", JsonUtility.ToJson(json));
+                ScreenResponse details = JsonUtility.FromJson<ScreenResponse>(response);
+                stream = new Stream(details.width, details.height, details.port, details.receiverPipeline);
+            } 
         }
         else
         {
-            // virtual
-            CreateMonitorData json = new() { direction = this.direction.ToString() };
-            string response = await HttpClient.Instance.POST("/createMonitor", JsonUtility.ToJson(json));
-            ScreenResponse details = JsonUtility.FromJson<ScreenResponse>(response);
-            stream = new Stream(details.width, details.height, details.port, details.receiverPipeline);
+            Debug.Log("Debug");
+            // Debug path
+            stream = new Stream(1920, 1080, 0, "");
         }
 
-        ApplyScale(stream.width, stream.height);
 
-        //TexturesExtension ext = GetComponentInChildren<TexturesExtension>();
-        //ext.Resolution = new Vector2(stream.width, stream.height);
+        ApplyScale(stream.width, stream.height);
 
         Debug.Log("Set resolution to: " + stream.width + "x" + stream.height);
 

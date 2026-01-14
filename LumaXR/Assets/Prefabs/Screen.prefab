@@ -212,7 +212,7 @@ MonoBehaviour:
   m_UICanvas: {fileID: 0}
   m_UIMirrorComponent: {fileID: 0}
   m_LayerOutline: {fileID: 5020663175219218405}
-  m_Order: 1
+  m_Order: 3
   m_LayerData:
     rid: 5135525418381869057
   m_PlatformLayerDataKeys: []
@@ -345,7 +345,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 96
   m_CollisionDetection: 0
 --- !u!114 &5742054784826642012
 MonoBehaviour:

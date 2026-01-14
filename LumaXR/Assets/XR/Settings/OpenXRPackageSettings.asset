@@ -66,6 +66,29 @@ MonoBehaviour:
   targetOpenXRApiVersion: 
   required: 0
   customRuntimeLoaderName: 
+--- !u!114 &-8609812638714176286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f40c5e4e52004deea19e38c40b26566, type: 3}
+  m_Name: CaptureXRHandlesFeature Standalone
+  m_EditorClassIdentifier: Assembly-CSharp::InterceptCreateSessionFeature
+  m_enabled: 0
+  <failedInitialization>k__BackingField: 0
+  nameUi: Capture Unity OpenXR Instance/Session
+  version: 1.0.0
+  featureIdInternal: com.test.test.capturehandles
+  openxrExtensionStrings: 
+  company: LumaXR
+  priority: 0
+  targetOpenXRApiVersion: 
+  required: 0
+  customRuntimeLoaderName: 
 --- !u!114 &-8602898579829568561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,6 +353,7 @@ MonoBehaviour:
   m_Name: CaptureXRHandlesFeature Android
   m_EditorClassIdentifier: Assembly-CSharp::XRInstance
   m_enabled: 0
+  <failedInitialization>k__BackingField: 0
   nameUi: Capture Unity OpenXR Instance/Session
   version: 1.0.0
   featureIdInternal: com.bluewave41.lumaxr.capturehandles
@@ -650,6 +674,7 @@ MonoBehaviour:
   m_Name: CaptureXRHandlesFeature Standalone
   m_EditorClassIdentifier: Assembly-CSharp::XRInstance
   m_enabled: 1
+  <failedInitialization>k__BackingField: 0
   nameUi: Capture Unity OpenXR Instance/Session
   version: 1.0.0
   featureIdInternal: com.bluewave41.lumaxr.capturehandles
@@ -1215,7 +1240,6 @@ MonoBehaviour:
   - {fileID: -4819140938699151978}
   - {fileID: 4182571608279972982}
   - {fileID: 629567283149367902}
-  - {fileID: -5435087643965453456}
   - {fileID: 8983497201687346609}
   - {fileID: 6886245988355559344}
   - {fileID: 6746228182035495572}
@@ -1490,6 +1514,29 @@ MonoBehaviour:
   customRuntimeLoaderName: 
   m_MinResolutionScalar: 0.05
   m_MaxResolutionScalar: 1
+--- !u!114 &919045065020577137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f40c5e4e52004deea19e38c40b26566, type: 3}
+  m_Name: InterceptCreateSessionFeature Metro
+  m_EditorClassIdentifier: Assembly-CSharp::InterceptCreateSessionFeature
+  m_enabled: 0
+  <failedInitialization>k__BackingField: 0
+  nameUi: Intercept Create Session
+  version: 0.0.1
+  featureIdInternal: com.bluewave41.lumaxr.feature.intercept
+  openxrExtensionStrings: 
+  company: LumaXR
+  priority: 0
+  targetOpenXRApiVersion: 
+  required: 0
+  customRuntimeLoaderName: 
 --- !u!114 &1016813352541367535
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1703,7 +1750,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   features:
   - {fileID: 4846870782995004303}
-  - {fileID: -3388553640204797691}
   - {fileID: 6485167879704508415}
   - {fileID: 4634134690582946360}
   - {fileID: 6710409733205913234}
@@ -2319,6 +2365,29 @@ MonoBehaviour:
   required: 0
   customRuntimeLoaderName: 
   m_PlaneProviderType: 1
+--- !u!114 &6139579755881519611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f40c5e4e52004deea19e38c40b26566, type: 3}
+  m_Name: CaptureXRHandlesFeature Android
+  m_EditorClassIdentifier: Assembly-CSharp::CaptureXRHandlesFeature
+  m_enabled: 0
+  <failedInitialization>k__BackingField: 0
+  nameUi: Capture Unity OpenXR Instance/Session
+  version: 1.0.0
+  featureIdInternal: com.test.test.capturehandles
+  openxrExtensionStrings: 
+  company: LumaXR
+  priority: 0
+  targetOpenXRApiVersion: 
+  required: 0
+  customRuntimeLoaderName: 
 --- !u!114 &6413359822837567670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2755,6 +2824,7 @@ MonoBehaviour:
   m_Name: InterceptCreateSessionFeature Metro
   m_EditorClassIdentifier: Assembly-CSharp::InterceptCreateSessionFeature
   m_enabled: 0
+  <failedInitialization>k__BackingField: 0
   nameUi: 'Sample: Intercept Create Session'
   version: 0.0.1
   featureIdInternal: com.unity.openxr.feature.example.intercept

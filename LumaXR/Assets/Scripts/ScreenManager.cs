@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Unity.Collections;
 using UnityEngine;
 
 public class ScreenManager : MonoBehaviour
@@ -22,6 +23,8 @@ public class ScreenManager : MonoBehaviour
     private readonly List<DropZone> dropZones = new();
     private bool isCenterSelected = false;
     public ServerPanel serverPanel;
+    private Vector3 lastPosition;
+    private Quaternion lastRotation;
 
     private void Awake()
     {
@@ -46,11 +49,15 @@ public class ScreenManager : MonoBehaviour
 
     private async Task BeginStream(ServerCard card)
     {
-        serverPanel.gameObject.SetActive(false);
-        HttpClient.Instance.StartClient(card.IP, card.Port);
-        byte[] data = Encoding.UTF8.GetBytes("start");
-        using var client = new UdpClient();
-        client.Send(data, data.Length, config.IP, config.Port);
+        if(!Settings.Instance.debug)
+        {
+            serverPanel.gameObject.SetActive(false);
+            HttpClient.Instance.StartClient(card.IP, card.Port);
+            byte[] data = Encoding.UTF8.GetBytes("start");
+            using var client = new UdpClient();
+            client.Send(data, data.Length, config.IP, config.Port);
+        }
+
         SpawnScreen(Direction.CENTER);
     }
 
@@ -89,7 +96,7 @@ public class ScreenManager : MonoBehaviour
 
         if(direction == Direction.CENTER)
         {
-            float distance = 1.6f;
+            float distance = 2.0f;
 
             // Position in front of player
             Transform playerHead = VRPlayer.Instance.Head;
@@ -100,35 +107,56 @@ public class ScreenManager : MonoBehaviour
 
             // Look at player
             screen.transform.LookAt(playerHead.position);
-            screen.transform.Rotate(0, 180f, 0);
+            screen.transform.Rotate(0, 180, 0);
+
+            lastPosition = screen.transform.position;
+            lastRotation = screen.transform.rotation;
         }
         else
         {
-            Transform centerTransform = screens[Direction.CENTER].transform;
+            Screen center = screens[Direction.CENTER];
+            Transform centerTransform = center.transform;
             Transform displayTransform = centerTransform.Find("Display");
-            Vector3 pos = centerTransform.position;
+            centerTransform.GetPositionAndRotation(out Vector3 pos, out Quaternion rot);
+            screen.transform.SetPositionAndRotation(centerTransform.position, centerTransform.rotation);
 
             float centerWidth = displayTransform.lossyScale.x;
             float centerHeight = displayTransform.lossyScale.y;
+
+            Vector3 pivot = new(0, 0, 0);
+            Vector3 axis = new();
+            float rotationAmount = 0;
 
             switch (direction)
             {
                 case Direction.TOP:
                     pos += centerTransform.up * centerHeight;
+                    pivot.y -= 0.5f;
+                    rotationAmount = 45;
+                    axis = displayTransform.right;
                     break;
                 case Direction.LEFT:
                     pos -= centerTransform.right * centerWidth;
+                    pivot.x += 0.5f;
+                    rotationAmount = 45;
+                    axis = displayTransform.up;
                     break;
-
                 case Direction.RIGHT:
                     pos += centerTransform.right * centerWidth;
+                    pivot.x -= 0.5f;
+                    rotationAmount = -45;
+                    axis = displayTransform.up;
                     break;
                 case Direction.BOTTOM:
                     pos -= centerTransform.up * centerHeight;
+                    pivot.y += 0.5f;
+                    rotationAmount = -45;
                     break;
             }
 
-            screen.transform.SetPositionAndRotation(pos, centerTransform.rotation);
+            Vector3 worldPivot = displayTransform.TransformPoint(pivot);
+            screen.transform.position = pos;
+            screen.transform.RotateAround(worldPivot, axis, rotationAmount);
 
             Transform buttons = centerTransform.Find("Buttons");
             foreach (Transform button in buttons) {
@@ -150,7 +178,6 @@ public class ScreenManager : MonoBehaviour
         Transform display = screen.transform.Find("Display");
         float xScale = display.lossyScale.x / 2;
         float yScale = display.lossyScale.y / 2;
-        Debug.Log("Grabbed!");
         if(screen.direction == Direction.CENTER)
         {
             isCenterSelected = true;
@@ -190,5 +217,32 @@ public class ScreenManager : MonoBehaviour
             Destroy(zone.gameObject);
         }
         dropZones.Clear();
+    }
+
+    void Update()
+    {
+        if(!isCenterSelected)
+        {
+            return;
+        }
+        Screen centerScreen = screens[Direction.CENTER];
+        Transform center = centerScreen.transform;
+
+        Vector3 positionDelta = center.position - lastPosition;
+        Quaternion rotationDelta = center.rotation * Quaternion.Inverse(lastRotation);
+
+        foreach (var kvp in screens)
+        {
+            if(kvp.Key == Direction.CENTER)
+            {
+                continue;
+            }
+            Transform t = kvp.Value.transform;
+            t.SetPositionAndRotation(center.position + rotationDelta * (t.position - center.position), rotationDelta * t.rotation);
+            t.position += positionDelta;
+        }
+
+        lastPosition = center.position;
+        lastRotation = center.rotation;
     }
 }

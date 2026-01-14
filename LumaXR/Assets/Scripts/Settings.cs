@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.XR;
 
 public class Settings : MonoBehaviour
 {
@@ -7,6 +8,10 @@ public class Settings : MonoBehaviour
     public bool debug = false;
     public bool handsEnabled = true;
 
+    void Start()
+    {
+        XRSettings.useOcclusionMesh = false;
+    }
     void Awake()
     {
         if (Instance != null && Instance != this)

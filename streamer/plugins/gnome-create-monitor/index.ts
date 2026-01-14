@@ -7,6 +7,13 @@ interface Logger {
   error: (...message: any[]) => void;
 }
 
+interface Settings {
+  senderPipeline: string;
+  receiverPipeline: string;
+  virtualOnly: boolean;
+  linuxMode: boolean;
+}
+
 const bus = (sessionBus as any)({ negotiateUnixFd: true });
 
 module.exports = {
@@ -16,9 +23,10 @@ module.exports = {
    * This function should create a virtual monitor and return a pipewire
    * node coresponding to the stream to record.
    */
-  async exec(logger: Logger) {
+  async exec(logger: Logger, settings: Settings) {
     logger.log("Plugin running!");
-    const nodeId = await recordMonitor(true);
+    logger.log("Settings: ", settings.virtualOnly);
+    const nodeId = await recordMonitor(settings.virtualOnly);
     logger.log("Piugin node: ", nodeId);
     return nodeId;
   },

@@ -2,6 +2,7 @@ import { promises as fs } from "fs";
 import Logger from "./Logger";
 import { build } from "esbuild";
 import path from "path";
+import Settings from "./Settings";
 
 type PluginKeys = "create-monitor";
 const pluginKeys: PluginKeys[] = ["create-monitor"];
@@ -11,7 +12,7 @@ interface Plugin {
 }
 interface CreatePlugin extends Plugin {
   key: "create-monitor";
-  exec: (logger: typeof Logger) => Promise<number>;
+  exec: (logger: typeof Logger, settings: typeof Settings) => Promise<number>;
 }
 
 type AnyPlugin = CreatePlugin;
@@ -84,7 +85,7 @@ export class InternalPluginManager {
     Logger.log(JSON.stringify(this.plugins));
     const plugin = this.plugins[key];
     if (plugin && "exec" in plugin) {
-      return plugin.exec(Logger);
+      return plugin.exec(Logger, Settings);
     }
     Logger.log(`No plugin found for: ${key}`);
     throw new Error();
