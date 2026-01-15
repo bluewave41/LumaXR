@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Unity.Collections;
 using UnityEngine;
 
 public class ScreenManager : MonoBehaviour
@@ -119,6 +118,7 @@ public class ScreenManager : MonoBehaviour
             Transform displayTransform = centerTransform.Find("Display");
             centerTransform.GetPositionAndRotation(out Vector3 pos, out Quaternion rot);
             screen.transform.SetPositionAndRotation(centerTransform.position, centerTransform.rotation);
+            center.RemoveButton(direction);
 
             float centerWidth = displayTransform.lossyScale.x;
             float centerHeight = displayTransform.lossyScale.y;
@@ -221,10 +221,8 @@ public class ScreenManager : MonoBehaviour
 
     void Update()
     {
-        if(!isCenterSelected)
-        {
-            return;
-        }
+        if (!isCenterSelected) return;
+
         Screen centerScreen = screens[Direction.CENTER];
         Transform center = centerScreen.transform;
 
@@ -233,16 +231,28 @@ public class ScreenManager : MonoBehaviour
 
         foreach (var kvp in screens)
         {
-            if(kvp.Key == Direction.CENTER)
-            {
-                continue;
-            }
+            if (kvp.Key == Direction.CENTER) continue;
+
             Transform t = kvp.Value.transform;
-            t.SetPositionAndRotation(center.position + rotationDelta * (t.position - center.position), rotationDelta * t.rotation);
-            t.position += positionDelta;
+
+            t.position = center.position + rotationDelta * (t.position - lastPosition);
+            t.rotation = rotationDelta * t.rotation;
         }
 
         lastPosition = center.position;
         lastRotation = center.rotation;
+    }
+
+    public List<Direction> GetOpenDirections()
+    {
+        List<Direction> openDirections = new();
+        foreach(Direction dir in Enum.GetValues(typeof(Direction)))
+        {
+            if(!screens.TryGetValue(dir, out Screen s))
+            {
+                openDirections.Add(dir);
+            }
+        }
+        return openDirections;
     }
 }

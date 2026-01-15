@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -58,6 +57,7 @@ public class Screen : MonoBehaviour
         if (grabbers.Count != 2)
         {
             grabInteractable.trackPosition = true;
+            grabInteractable.trackRotation = true;
             return;
         }
 
@@ -107,14 +107,15 @@ public class Screen : MonoBehaviour
         grabbers.CopyTo(hands);
 
         initialHandsDistance = Vector3.Distance(hands[0].attachTransform.position, hands[1].attachTransform.position);
-        initialQuadScale = transform.localScale;
+        initialQuadScale = transform.Find("Display").localScale;
         grabInteractable.trackPosition = false;
+        grabInteractable.trackRotation = false;
     }
 
     public void ApplyScale(int width, int height)
     {
-        this.stream.width = width;
-        this.stream.height = height;
+        stream.width = width;
+        stream.height = height;
 
         float verticalAngleRad = 25 * Mathf.Deg2Rad;
 
@@ -168,27 +169,7 @@ public class Screen : MonoBehaviour
 
         if(direction == Direction.CENTER)
         {
-            foreach (var kv in relativePositions)
-            {
-                Direction dir = kv.Key;
-                Vector2 relativePosition = kv.Value;
-
-                CreateScreenButton button = Instantiate(buttonPrefab, buttonsContainer.transform);
-                button.direction = dir;
-
-                float halfWidth  = displayQuad.localScale.x / 2f;
-                float halfHeight = displayQuad.localScale.y / 2f;
-
-                float paddingX = 1f;
-                float paddingY = 0.5f;
-
-                button.transform.localPosition = new Vector3(
-                    relativePosition.x == 0f ? 0f : Mathf.Sign(relativePosition.x) * (halfWidth + paddingX),
-                    relativePosition.y == 0f ? 0f : Mathf.Sign(relativePosition.y) * (halfHeight + paddingY),
-                    0f
-                );
-                buttons.Add(dir, button);
-            }
+            CreateButtons();
         }
 
         gameObject.SetActive(true);
@@ -199,13 +180,72 @@ public class Screen : MonoBehaviour
         }
     }
 
+    public void CreateButtons()
+    {
+        // recreate buttons with new scale
+        List<Direction> openDirections = ScreenManager.Instance.GetOpenDirections();
+        Debug.Log(openDirections.Count);
+        foreach (var kv in relativePositions)
+        {
+            Direction dir = kv.Key;
+
+            if(!openDirections.Contains(dir))
+            {
+                Debug.Log("No: " + dir);
+                continue;
+            }
+
+            Vector2 relativePosition = kv.Value;
+
+            CreateScreenButton button = Instantiate(buttonPrefab, buttonsContainer.transform);
+            button.direction = dir;
+
+            float halfWidth  = displayQuad.localScale.x / 2f;
+            float halfHeight = displayQuad.localScale.y / 2f;
+
+            float paddingX = 1f;
+            float paddingY = 0.5f;
+
+            button.transform.localPosition = new Vector3(
+                relativePosition.x == 0f ? 0f : Mathf.Sign(relativePosition.x) * (halfWidth + paddingX),
+                relativePosition.y == 0f ? 0f : Mathf.Sign(relativePosition.y) * (halfHeight + paddingY),
+                0f
+            );
+            buttons.Add(dir, button);
+        }
+    }
+
+    public void DestroyButtons()
+    {
+        foreach (var kvp in buttons)
+        {
+            Destroy(kvp.Value.gameObject);
+        }
+
+        buttons.Clear();
+    }
+
     public void OnGrab()
     {
+        if(direction == Direction.CENTER)
+        {
+            DestroyButtons();
+        }
         ScreenManager.Instance.HandleScreenGrab(this);
     }
 
     public void OnRelease()
     {
+        if(direction == Direction.CENTER)
+        {
+            // TODO: This probably runs twice for two hand grab so lets just destroy buttons again
+            DestroyButtons();
+            CreateButtons();
+        }
         ScreenManager.Instance.ReleaseScreenGrab();
+    }
+    public void RemoveButton(Direction dir)
+    {
+        buttons.Remove(dir);
     }
 }
