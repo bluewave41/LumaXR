@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
@@ -26,8 +25,6 @@ public class Screen : MonoBehaviour
     public GameObject buttonsContainer;
     public Transform displayQuad;
     public Stream stream;
-    private HashSet<XRBaseInteractor> grabbers = new();
-    private XRGrabInteractable grabInteractable;
     private Transform display;
 
     private readonly Dictionary<Direction, CreateScreenButton> buttons = new();
@@ -39,77 +36,11 @@ public class Screen : MonoBehaviour
         { Direction.BOTTOM,new Vector2(0, -1) }
     };
 
-    float initialHandsDistance;
-    Vector3 initialQuadScale;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     async void Awake()
     {
         display = transform.Find("Display");
-        grabInteractable = GetComponent<XRGrabInteractable>();
-        grabInteractable.selectEntered.AddListener(OnGrab);
-        grabInteractable.selectExited.AddListener(OnRelease);
         gameObject.SetActive(false);
-    }
-
-    private void LateUpdate()
-    {
-        if (grabbers.Count != 2)
-        {
-            grabInteractable.trackPosition = true;
-            grabInteractable.trackRotation = true;
-            return;
-        }
-
-        XRBaseInteractor[] hands = new XRBaseInteractor[2];
-        grabbers.CopyTo(hands);
-
-        Vector3 hand0Pos = hands[0].attachTransform.position;
-        Vector3 hand1Pos = hands[1].attachTransform.position;
-        Debug.Log("0pos " + hand0Pos);
-        Debug.Log("1pos " + hand1Pos);
-
-        float currentDistance = Vector3.Distance(hand0Pos, hand1Pos);
-        float scaleFactor = currentDistance / initialHandsDistance;
-
-        Debug.Log("Distance " + currentDistance);
-        Debug.Log("Scale " + scaleFactor);
-
-        scaleFactor = Mathf.Clamp(scaleFactor, 0.2f, 5f);
-        Debug.Log("Capped scale " + scaleFactor);
-
-        display.localScale = initialQuadScale * scaleFactor;
-    }
-
-    private void OnGrab(SelectEnterEventArgs args)
-    {
-        XRBaseInteractor interactor = args.interactorObject as XRBaseInteractor;
-        grabbers.Add(interactor);
-
-        if(grabbers.Count == 2)
-        {
-            OnTwoHandGrab();
-            // remove dropzones
-            ScreenManager.Instance.ReleaseScreenGrab();
-        }
-    }
-
-    private void OnRelease(SelectExitEventArgs args)
-    {
-        XRBaseInteractor interactor = args.interactorObject as XRBaseInteractor;
-        grabbers.Remove(interactor);
-    }
-
-    private void OnTwoHandGrab()
-    {
-        Debug.Log("Two hand grab!");
-        XRBaseInteractor[] hands = new XRBaseInteractor[2];
-        grabbers.CopyTo(hands);
-
-        initialHandsDistance = Vector3.Distance(hands[0].attachTransform.position, hands[1].attachTransform.position);
-        initialQuadScale = transform.Find("Display").localScale;
-        grabInteractable.trackPosition = false;
-        grabInteractable.trackRotation = false;
     }
 
     public void ApplyScale(int width, int height)
@@ -127,6 +58,8 @@ public class Screen : MonoBehaviour
 
     public async Task Initialize()
     {
+        TwoHandResize resize = GetComponent<TwoHandResize>();
+        resize.OnTwoHandGrabStart.AddListener(OnTwoHandGrab);
         if(!ScreenManager.Instance.zonesContainer)
         {
             GameObject zones = transform.Find("Zones").gameObject;
@@ -178,6 +111,11 @@ public class Screen : MonoBehaviour
         {
             GetComponentInChildren<GStreamer>().Begin(stream.width, stream.height, stream.port, stream.pipeline);
         }
+    }
+
+    private void OnTwoHandGrab()
+    {
+        ScreenManager.Instance.HandleTwoHandGrab();
     }
 
     public void CreateButtons()

@@ -209,14 +209,24 @@ public class ScreenManager : MonoBehaviour
         }
     }
 
-    public void ReleaseScreenGrab()
+    private void DestroyDropZones()
     {
-        isCenterSelected = false;
         foreach (DropZone zone in dropZones)
         {
             Destroy(zone.gameObject);
         }
         dropZones.Clear();
+    }
+
+    public void ReleaseScreenGrab()
+    {
+        isCenterSelected = false;
+        DestroyDropZones();
+    }
+
+    public void HandleTwoHandGrab()
+    {
+        DestroyDropZones();
     }
 
     void Update()

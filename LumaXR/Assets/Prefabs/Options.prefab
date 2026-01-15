@@ -571,6 +571,7 @@ GameObject:
   - component: {fileID: 5910905398166300730}
   - component: {fileID: 3174401492243629579}
   - component: {fileID: 2222400570394200476}
+  - component: {fileID: 2283205597430045153}
   m_Layer: 0
   m_Name: Portals
   m_TagString: Untagged
@@ -648,6 +649,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
   hoverColor: {r: 0, g: 1, b: 1, a: 1}
+  OnActivate:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2283205597430045153}
+        m_TargetAssemblyTypeName: PortalOptions, Assembly-CSharp
+        m_MethodName: CreatePortal
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &2283205597430045153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3871356453201538082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6903aa0a2afc45dc7b7e046580c9dd03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PortalOptions
+  portalPrefab: {fileID: 7787231670857451785, guid: 96411526035eaa6ad88a1884aaeea677, type: 3}
 --- !u!1 &4963859727037272962
 GameObject:
   m_ObjectHideFlags: 0
@@ -942,6 +971,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
   hoverColor: {r: 0, g: 1, b: 1, a: 1}
+  OnActivate:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6005344464712643606
 GameObject:
   m_ObjectHideFlags: 0
@@ -1298,6 +1330,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIButton
   hoverColor: {r: 0, g: 1, b: 1, a: 1}
+  OnActivate:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!65 &831964644291502612
 BoxCollider:
   m_ObjectHideFlags: 0

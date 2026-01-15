@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Custom_Passthrough
+  m_Name: Passthrough
   m_Shader: {fileID: 4800000, guid: b3b7767e6383ef83f96e74d374309b67, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

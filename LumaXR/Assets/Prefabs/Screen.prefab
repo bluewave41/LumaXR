@@ -295,6 +295,7 @@ GameObject:
   - component: {fileID: 2881406558782412430}
   - component: {fileID: 5742054784826642012}
   - component: {fileID: 3272031704918967615}
+  - component: {fileID: 4824126143329127287}
   m_Layer: 0
   m_Name: Screen
   m_TagString: Untagged
@@ -517,3 +518,16 @@ MonoBehaviour:
   buttonPrefab: {fileID: 4943224083182778411, guid: 5dccd7f252fe0dd23ae221f2e006d612, type: 3}
   buttonsContainer: {fileID: 5979014174595511800}
   displayQuad: {fileID: 3177290232685004215}
+--- !u!114 &4824126143329127287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6426952015373501417}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca9d2a23ee2fbcfd8622cb0f8304a5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TwoHandResize
+  primitiveTransform: {fileID: 3177290232685004215}
