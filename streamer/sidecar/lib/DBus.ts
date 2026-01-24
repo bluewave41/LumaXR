@@ -13,11 +13,11 @@ let monitors: Monitor[] = [];
 export async function createSession() {
   const screenCast = await bus.getProxyObject(
     "org.gnome.Mutter.ScreenCast",
-    "/org/gnome/Mutter/ScreenCast"
+    "/org/gnome/Mutter/ScreenCast",
   );
 
   const screenCastIface = screenCast.getInterface(
-    "org.gnome.Mutter.ScreenCast"
+    "org.gnome.Mutter.ScreenCast",
   );
 
   const sessionPath = await screenCastIface.CreateSession({});
@@ -25,11 +25,11 @@ export async function createSession() {
 
   const sessionObj = await bus.getProxyObject(
     "org.gnome.Mutter.ScreenCast",
-    sessionPath
+    sessionPath,
   );
 
   const sessionIface = sessionObj.getInterface(
-    "org.gnome.Mutter.ScreenCast.Session"
+    "org.gnome.Mutter.ScreenCast.Session",
   );
 
   return sessionIface;
@@ -44,7 +44,7 @@ export async function recordMonitor(virtual: boolean, port: number) {
       "cursor-mode": new Variant("u", 1),
     });
   } else {
-    streamPath = await sessionIface.RecordMonitor("DP-1", {
+    streamPath = await sessionIface.RecordMonitor("HDMI-1", {
       "cursor-mode": new Variant("u", 1),
     });
   }
@@ -52,11 +52,11 @@ export async function recordMonitor(virtual: boolean, port: number) {
   // Get the stream object
   const streamObj = await bus.getProxyObject(
     "org.gnome.Mutter.ScreenCast",
-    streamPath
+    streamPath,
   );
 
   const streamIface = streamObj.getInterface(
-    "org.gnome.Mutter.ScreenCast.Stream"
+    "org.gnome.Mutter.ScreenCast.Stream",
   );
 
   const nodeIdPromise = new Promise((resolve, reject) => {
@@ -88,11 +88,11 @@ export async function watchResolutionChanges() {
 
   const displayConfig = await bus.getProxyObject(
     "org.gnome.Mutter.DisplayConfig",
-    "/org/gnome/Mutter/DisplayConfig"
+    "/org/gnome/Mutter/DisplayConfig",
   );
 
   const displayIFace = displayConfig.getInterface(
-    "org.gnome.Mutter.DisplayConfig"
+    "org.gnome.Mutter.DisplayConfig",
   );
 
   displayIFace.on("MonitorsChanged", () => {
@@ -104,11 +104,11 @@ export async function watchResolutionChanges() {
       for (const monitor of newMonitors) {
         Logger.log("Monitor", JSON.stringify(monitor));
         const info = monitor[1].find(
-          (el: any) => el[6]["is-current"] !== undefined
+          (el: any) => el[6]["is-current"] !== undefined,
         );
         if (info) {
           tempMonitors.push(
-            new Monitor(monitor[0][0], info[1], info[2], 0, 0, info[3], false)
+            new Monitor(monitor[0][0], info[1], info[2], 0, 0, info[3], false),
           );
         }
       }
@@ -125,7 +125,7 @@ export async function watchResolutionChanges() {
       const changedMonitors: Monitor[] = [];
       for (const monitor of tempMonitors) {
         const index = monitors.findIndex(
-          (el) => el.connector === monitor.connector
+          (el) => el.connector === monitor.connector,
         );
         const oldMonitor = monitors[index];
         if (oldMonitor && !monitor.equal(oldMonitor)) {
@@ -146,11 +146,11 @@ export async function watchResolutionChanges() {
 export async function getMonitors() {
   const displayConfig = await bus.getProxyObject(
     "org.gnome.Mutter.DisplayConfig",
-    "/org/gnome/Mutter/DisplayConfig"
+    "/org/gnome/Mutter/DisplayConfig",
   );
 
   const displayIFace = displayConfig.getInterface(
-    "org.gnome.Mutter.DisplayConfig"
+    "org.gnome.Mutter.DisplayConfig",
   );
 
   const newMonitors = await displayIFace.GetCurrentState();
@@ -159,7 +159,7 @@ export async function getMonitors() {
   for (const monitor of newMonitors[1]) {
     const info = monitor[1][0];
     tempMonitors.push(
-      new Monitor(monitor[0][0], info[1], info[2], 0, 0, info[3], false)
+      new Monitor(monitor[0][0], info[1], info[2], 0, 0, info[3], false),
     );
   }
 

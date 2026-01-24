@@ -51,6 +51,13 @@ process.stdin.on("data", (d) => {
       case "debug-start-stream":
         fetch("http://localhost:4000/getPipeline");
         break;
+      case "stream-update":
+        const stream = StreamManager.getStream(json.port);
+        const monitor = stream?.monitor;
+        monitor?.update(json.newWidth, json.newHeight);
+        Logger.log("Monitor: " + monitor?.width + "x" + monitor?.height);
+        stream?.restart();
+        break;
     }
   } catch (e) {
     Logger.log("Non JSON request received: ", message);
@@ -62,6 +69,6 @@ const sendResponse = (id: number, args: Record<string, any>) => {
     JSON.stringify({
       _id: id,
       ...args,
-    })
+    }),
   );
 };

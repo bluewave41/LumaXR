@@ -14,7 +14,7 @@ export class Monitor {
     xOffset: number,
     yOffset: number,
     frameRate: number,
-    isPrimary: boolean
+    isPrimary: boolean,
   ) {
     this.connector = connector;
     this.width = width;
@@ -23,6 +23,10 @@ export class Monitor {
     this.yOffset = yOffset;
     this.frameRate = frameRate;
     this.isPrimary = isPrimary;
+  }
+  update(newWidth: number, newHeight: number) {
+    this.width = newWidth;
+    this.height = newHeight;
   }
   // TODO: one line this
   equal(monitor: Monitor) {

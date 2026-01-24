@@ -234,6 +234,14 @@ extern "C" UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API void StartGStreamer(GStrea
   Logger::log("After started");
 }
 
+void DestroyGStreamerInstance(int instanceId) {
+  auto it = std::find_if(gstreamerInstances.begin(), gstreamerInstances.end(), [instanceId](GStreamerInstance * instance){ return instance->id == instanceId;});
+  if(it != gstreamerInstances.end()) {
+    delete *it;
+    gstreamerInstances.erase(it);
+  }
+}
+
 extern "C" UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API void StopPipeline(int instanceId) {
   GStreamerInstance *instance = GetGStreamerInstance(instanceId);
   if(!instance) {
@@ -242,6 +250,7 @@ extern "C" UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API void StopPipeline(int inst
 
   gst_element_set_state(instance->pipeline, GST_STATE_NULL);
   gst_object_unref(instance->pipeline);
+  DestroyGStreamerInstance(instanceId);
 }
 
 extern "C" UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API void RestartStream(GStreamerInstance *instance) {

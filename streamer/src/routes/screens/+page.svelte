@@ -20,6 +20,9 @@
 
   let ws: WebSocket | null;
 
+  let selectedWidth = $state("1920");
+  let selectedHeight = $state("1080");
+
   (async () => {
     const response = await Sidecar.write("get-streams");
     const { settings } = await Sidecar.write("read-settings");
@@ -42,13 +45,12 @@
   const onInput = (
     field: keyof Coordinates,
     index: number,
-    event: InputEvent
+    event: InputEvent,
   ) => {
     if (position === null) {
       return;
     }
     const target = event.currentTarget as HTMLInputElement;
-    console.log("edited", field, index, target.value);
     position[field][index] = parseFloat(target.value);
   };
 
@@ -67,6 +69,14 @@
       ws.send(JSON.stringify({ id: 1, position }));
     }
   };
+
+  const onUpdate = async () => {
+    await Sidecar.write("stream-update", {
+      port: stream.port,
+      newWidth: selectedWidth,
+      newHeight: selectedHeight,
+    });
+  };
 </script>
 
 <h1>Screens</h1>
@@ -84,9 +94,34 @@
 
 {#if stream}
   <div class="container">
-    <p class="center">{stream.width}</p>
     <div class="row">
-      <p>{stream.height}</p>
+      <select class="center" bind:value={selectedWidth}>
+        <option>3840</option>
+        <option>3440</option>
+        <option>2560</option>
+        <option>2048</option>
+        <option selected>1920</option>
+        <option>1600</option>
+        <option>1280</option>
+        <option>1024</option>
+        <option>800</option>
+        <option>640</option>
+      </select>
+    </div>
+
+    <div class="row">
+      <select class="center" bind:value={selectedHeight}>
+        <option>2160</option>
+        <option>1600</option>
+        <option>1440</option>
+        <option>1280</option>
+        <option>1200</option>
+        <option selected>1080</option>
+        <option>900</option>
+        <option>720</option>
+        <option>600</option>
+        <option>480</option>
+      </select>
       <div class="box">
         {#if position}
           <div class="grid">
@@ -135,6 +170,7 @@
     >Request positions</button
   >
   <button onclick={onSendPositions}>Send positions</button>
+  <button onclick={onUpdate}>Update</button>
 {/if}
 
 <style>
@@ -150,7 +186,8 @@
   }
   .row {
     display: flex;
-    flex: 1;
+    align-items: center;
+    justify-content: center;
     gap: 0.5rem;
   }
   .grid {
@@ -160,6 +197,7 @@
   }
   .center {
     text-align: center;
+    width: 6rem;
   }
   .box {
     border: 1px solid aqua;

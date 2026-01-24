@@ -1,4 +1,4 @@
-import { spawn } from "child_process";
+import { ChildProcessWithoutNullStreams, spawn } from "child_process";
 import { Direction } from "../interfaces/Direction";
 import Logger from "./Logger";
 import { Monitor } from "./Monitor";
@@ -14,6 +14,7 @@ export class Stream extends EventEmitter {
   direction: Direction;
   node: number;
   isVirtual: boolean;
+  process: ChildProcessWithoutNullStreams | null = null;
 
   constructor(
     monitor: Monitor,
@@ -22,7 +23,7 @@ export class Stream extends EventEmitter {
     ip: string,
     port: number,
     direction: Direction,
-    isVirtual: boolean
+    isVirtual: boolean,
   ) {
     super();
     this.monitor = monitor;
@@ -38,38 +39,42 @@ export class Stream extends EventEmitter {
     Logger.log("Start called with: ", node);
     this.node = node;
 
-    this.senderPipeline = this.senderPipeline
+    const args = this.senderPipeline
       .replace("{path}", node.toString())
       .replace("{port}", this.port.toString())
       .replace("{width}", this.monitor.width.toString())
       .replace("{height}", this.monitor.height.toString())
       .replace("{ip}", this.ip)
-      .replace("{frameRate}", this.monitor.frameRate.toString());
+      .replace("{frameRate}", this.monitor.frameRate.toString())
+      .split(" ");
 
-    Logger.log("Starting GStreamer pipeline:", this.senderPipeline);
+    Logger.log("Starting GStreamer pipeline:", args);
 
-    const gstProcess = spawn(`gst-launch-1.0 ${this.senderPipeline}`, {
+    this.process = spawn(`gst-launch-1.0`, args, {
       stdio: "pipe",
-      shell: true,
     });
 
-    gstProcess.stdout.on("data", (data) => {
+    this.process.stdout.on("data", (data) => {
       Logger.log(data.toString());
     });
 
-    gstProcess.stderr.on("data", (data) => {
+    this.process.stderr.on("data", (data) => {
       Logger.error(data.toString());
     });
 
-    gstProcess.on("exit", (code, signal) => {
+    this.process.on("exit", (code, signal) => {
       //this.emit("closed", this);
       Logger.log("Stream exited: ", this.direction);
       Logger.log(`GStreamer exited with code ${code}, signal ${signal}`);
     });
 
-    gstProcess.on("error", (err) => {
+    this.process.on("error", (err) => {
       Logger.error("Failed to start GStreamer:", err);
     });
+  }
+  restart() {
+    this.process?.kill("SIGTERM");
+    this.start(this.node);
   }
   toJSON() {
     return {
@@ -80,7 +85,7 @@ export class Stream extends EventEmitter {
       port: this.port,
     };
   }
-  async update(monitor: Monitor) {
+  update(monitor: Monitor) {
     this.monitor = monitor;
     this.senderPipeline = Settings.senderPipeline;
   }

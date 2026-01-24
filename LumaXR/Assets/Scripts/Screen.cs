@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 [System.Serializable]
 public class ScreenResponse
@@ -185,5 +184,10 @@ public class Screen : MonoBehaviour
     public void RemoveButton(Direction dir)
     {
         buttons.Remove(dir);
+    }
+
+    public void ShowMenu()
+    {
+        
     }
 }

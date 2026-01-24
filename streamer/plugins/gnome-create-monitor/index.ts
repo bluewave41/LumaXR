@@ -35,22 +35,22 @@ module.exports = {
 async function createSession() {
   const screenCast = await bus.getProxyObject(
     "org.gnome.Mutter.ScreenCast",
-    "/org/gnome/Mutter/ScreenCast"
+    "/org/gnome/Mutter/ScreenCast",
   );
 
   const screenCastIface = screenCast.getInterface(
-    "org.gnome.Mutter.ScreenCast"
+    "org.gnome.Mutter.ScreenCast",
   );
 
   const sessionPath = await screenCastIface.CreateSession({});
 
   const sessionObj = await bus.getProxyObject(
     "org.gnome.Mutter.ScreenCast",
-    sessionPath
+    sessionPath,
   );
 
   const sessionIface = sessionObj.getInterface(
-    "org.gnome.Mutter.ScreenCast.Session"
+    "org.gnome.Mutter.ScreenCast.Session",
   );
 
   return sessionIface;
@@ -65,18 +65,18 @@ async function recordMonitor(virtual: boolean) {
       "cursor-mode": new Variant("u", 1),
     });
   } else {
-    streamPath = await sessionIface.RecordMonitor("DP-1", {
+    streamPath = await sessionIface.RecordMonitor("HDMI-1", {
       "cursor-mode": new Variant("u", 1),
     });
   }
 
   const streamObj = await bus.getProxyObject(
     "org.gnome.Mutter.ScreenCast",
-    streamPath
+    streamPath,
   );
 
   const streamIface = streamObj.getInterface(
-    "org.gnome.Mutter.ScreenCast.Stream"
+    "org.gnome.Mutter.ScreenCast.Stream",
   );
 
   const nodeIdPromise = new Promise((resolve, reject) => {

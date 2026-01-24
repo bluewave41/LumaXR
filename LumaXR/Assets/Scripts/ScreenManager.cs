@@ -48,9 +48,10 @@ public class ScreenManager : MonoBehaviour
 
     private async Task BeginStream(ServerCard card)
     {
+        serverPanel.gameObject.SetActive(false);
+
         if(!Settings.Instance.debug)
         {
-            serverPanel.gameObject.SetActive(false);
             HttpClient.Instance.StartClient(card.IP, card.Port);
             byte[] data = Encoding.UTF8.GetBytes("start");
             using var client = new UdpClient();
