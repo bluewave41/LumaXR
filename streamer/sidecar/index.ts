@@ -58,6 +58,23 @@ process.stdin.on("data", (d) => {
         Logger.log("Monitor: " + monitor?.width + "x" + monitor?.height);
         stream?.restart();
         break;
+      case "get-plugins":
+        sendResponse(json._id, { plugins: PluginManager.getPlugins() });
+        break;
+      case "get-env":
+        const env = (
+          process.env.XDG_CURRENT_DESKTOP ||
+          process.env.XDG_SESSION_DESKTOP ||
+          process.env.DESKTOP_SESSION ||
+          ""
+        )
+          .split(":")
+          .map((d) => d.toLowerCase());
+        sendResponse(json._id, { env });
+        break;
+      case "update-active-plugins":
+        PluginManager.activatePlugin(json.name);
+        break;
     }
   } catch (e) {
     Logger.log("Non JSON request received: ", message);

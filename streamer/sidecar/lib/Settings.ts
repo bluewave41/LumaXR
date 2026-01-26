@@ -3,6 +3,7 @@
 
 import * as fs from "fs";
 import Logger from "./Logger";
+import { Plugin } from "./PluginManager";
 
 class InternalSettings {
   senderPipeline: string;
@@ -10,6 +11,7 @@ class InternalSettings {
   virtualOnly: boolean;
   linuxMode: boolean;
   clientIp: string = "";
+  activePlugins: Plugin[] = [];
 
   constructor() {
     Logger.log("Settings initialized");
@@ -37,7 +39,7 @@ class InternalSettings {
     }
   }
   getSetting<K extends keyof InternalSettings>(
-    setting: K
+    setting: K,
   ): InternalSettings[K] {
     return this[setting];
   }

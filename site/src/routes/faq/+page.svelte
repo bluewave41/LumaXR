@@ -5,7 +5,7 @@
 <div class="container">
 	<h1 class="science-gothic">FAQ</h1>
 	<Dropdown
-		question="What distros are supported?"
+		question="What environments are supported?"
 		answer="LumaXR current only supports GNOME 40+. Virtual displays are created using private
 		Mutter API's as the open freedesktop API prompts users to accept a screen cast request whenever
 		a stream is created or destroyed."

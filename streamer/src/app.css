@@ -86,3 +86,8 @@ body {
   font-style: normal;
   font-variation-settings: "wdth" 100;
 }
+
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+}

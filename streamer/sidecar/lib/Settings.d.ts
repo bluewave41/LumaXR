@@ -1,9 +1,11 @@
+import { Plugin } from "./PluginManager";
 declare class InternalSettings {
     senderPipeline: string;
     receiverPipeline: string;
     virtualOnly: boolean;
     linuxMode: boolean;
     clientIp: string;
+    activePlugins: Plugin[];
     constructor();
     getSetting<K extends keyof InternalSettings>(setting: K): InternalSettings[K];
     getSettings(): {
