@@ -152,6 +152,7 @@ public class ScreenManager : MonoBehaviour
                     pos -= centerTransform.up * centerHeight;
                     pivot.y += 0.5f;
                     rotationAmount = -45;
+                    axis = displayTransform.right;
                     break;
             }
 

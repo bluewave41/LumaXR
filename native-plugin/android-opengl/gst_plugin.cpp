@@ -149,11 +149,11 @@ extern "C"
 {
   UNITY_INTERFACE_EXPORT void UNITY_INTERFACE_API UnityPluginLoad(IUnityInterfaces* unityInterfacesPtr) {
     IUnityLog * unityLogPtr = unityInterfacesPtr->Get<IUnityLog>();
-
+    
     gst_init(nullptr, nullptr);
     register_static_plugins();
-    gst_debug_set_default_threshold(GST_LEVEL_INFO);
-    gst_debug_add_log_function(gst_log_handler, unityLogPtr, nullptr);
+    //gst_debug_set_default_threshold(GST_LEVEL_LOG);
+    //gst_debug_add_log_function(gst_log_handler, unityLogPtr, nullptr);
 
     Logger::init(unityLogPtr);
     s_UnityInterfaces = unityInterfacesPtr;
